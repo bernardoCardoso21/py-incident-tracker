@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type ItemPublic, ItemsService } from "@/client"
+import { type IncidentPublic, IncidentsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -37,12 +37,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-interface EditItemProps {
-  item: ItemPublic
+interface EditIncidentProps {
+  item: IncidentPublic
   onSuccess: () => void
 }
 
-const EditItem = ({ item, onSuccess }: EditItemProps) => {
+const EditIncident = ({ item, onSuccess }: EditIncidentProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -59,15 +59,15 @@ const EditItem = ({ item, onSuccess }: EditItemProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
-      ItemsService.updateItem({ id: item.id, requestBody: data }),
+      IncidentsService.updateIncident({ id: item.id, requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("Item updated successfully")
+      showSuccessToast("Incident updated successfully")
       setIsOpen(false)
       onSuccess()
     },
     onError: handleError.bind(showErrorToast),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["incidents"] })
     },
   })
 
@@ -82,15 +82,15 @@ const EditItem = ({ item, onSuccess }: EditItemProps) => {
         onClick={() => setIsOpen(true)}
       >
         <Pencil />
-        Edit Item
+        Edit Incident
       </DropdownMenuItem>
       <DialogContent className="sm:max-w-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Edit Item</DialogTitle>
+              <DialogTitle>Edit Incident</DialogTitle>
               <DialogDescription>
-                Update the item details below.
+                Update the incident details below.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -142,4 +142,4 @@ const EditItem = ({ item, onSuccess }: EditItemProps) => {
   )
 }
 
-export default EditItem
+export default EditIncident

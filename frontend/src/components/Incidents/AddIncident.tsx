@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type ItemCreate, ItemsService } from "@/client"
+import { type IncidentCreate, IncidentsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -37,7 +37,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-const AddItem = () => {
+const AddIncident = () => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -53,16 +53,16 @@ const AddItem = () => {
   })
 
   const mutation = useMutation({
-    mutationFn: (data: ItemCreate) =>
-      ItemsService.createItem({ requestBody: data }),
+    mutationFn: (data: IncidentCreate) =>
+      IncidentsService.createIncident({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("Item created successfully")
+      showSuccessToast("Incident created successfully")
       form.reset()
       setIsOpen(false)
     },
     onError: handleError.bind(showErrorToast),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["incidents"] })
     },
   })
 
@@ -75,14 +75,14 @@ const AddItem = () => {
       <DialogTrigger asChild>
         <Button className="my-4">
           <Plus className="mr-2" />
-          Add Item
+          Add Incident
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Item</DialogTitle>
+          <DialogTitle>Add Incident</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new item.
+            Fill in the details to add a new incident.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -141,4 +141,4 @@ const AddItem = () => {
   )
 }
 
-export default AddItem
+export default AddIncident

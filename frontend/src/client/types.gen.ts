@@ -13,12 +13,12 @@ export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
-export type ItemCreate = {
+export type IncidentCreate = {
     title: string;
     description?: (string | null);
 };
 
-export type ItemPublic = {
+export type IncidentPublic = {
     title: string;
     description?: (string | null);
     id: string;
@@ -26,12 +26,12 @@ export type ItemPublic = {
     created_at?: (string | null);
 };
 
-export type ItemsPublic = {
-    data: Array<ItemPublic>;
+export type IncidentsPublic = {
+    data: Array<IncidentPublic>;
     count: number;
 };
 
-export type ItemUpdate = {
+export type IncidentUpdate = {
     title?: (string | null);
     description?: (string | null);
 };
@@ -113,37 +113,37 @@ export type ValidationError = {
     };
 };
 
-export type ItemsReadItemsData = {
+export type IncidentsReadIncidentsData = {
     limit?: number;
     skip?: number;
 };
 
-export type ItemsReadItemsResponse = (ItemsPublic);
+export type IncidentsReadIncidentsResponse = (IncidentsPublic);
 
-export type ItemsCreateItemData = {
-    requestBody: ItemCreate;
+export type IncidentsCreateIncidentData = {
+    requestBody: IncidentCreate;
 };
 
-export type ItemsCreateItemResponse = (ItemPublic);
+export type IncidentsCreateIncidentResponse = (IncidentPublic);
 
-export type ItemsReadItemData = {
+export type IncidentsReadIncidentData = {
     id: string;
 };
 
-export type ItemsReadItemResponse = (ItemPublic);
+export type IncidentsReadIncidentResponse = (IncidentPublic);
 
-export type ItemsUpdateItemData = {
+export type IncidentsUpdateIncidentData = {
     id: string;
-    requestBody: ItemUpdate;
+    requestBody: IncidentUpdate;
 };
 
-export type ItemsUpdateItemResponse = (ItemPublic);
+export type IncidentsUpdateIncidentResponse = (IncidentPublic);
 
-export type ItemsDeleteItemData = {
+export type IncidentsDeleteIncidentData = {
     id: string;
 };
 
-export type ItemsDeleteItemResponse = (Message);
+export type IncidentsDeleteIncidentResponse = (Message);
 
 export type LoginLoginAccessTokenData = {
     formData: Body_login_login_access_token;

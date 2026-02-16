@@ -71,7 +71,7 @@ export const HTTPValidationErrorSchema = {
     title: 'HTTPValidationError'
 } as const;
 
-export const ItemCreateSchema = {
+export const IncidentCreateSchema = {
     properties: {
         title: {
             type: 'string',
@@ -94,10 +94,10 @@ export const ItemCreateSchema = {
     },
     type: 'object',
     required: ['title'],
-    title: 'ItemCreate'
+    title: 'IncidentCreate'
 } as const;
 
-export const ItemPublicSchema = {
+export const IncidentPublicSchema = {
     properties: {
         title: {
             type: 'string',
@@ -142,10 +142,10 @@ export const ItemPublicSchema = {
     },
     type: 'object',
     required: ['title', 'id', 'owner_id'],
-    title: 'ItemPublic'
+    title: 'IncidentPublic'
 } as const;
 
-export const ItemUpdateSchema = {
+export const IncidentUpdateSchema = {
     properties: {
         title: {
             anyOf: [
@@ -174,14 +174,14 @@ export const ItemUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'ItemUpdate'
+    title: 'IncidentUpdate'
 } as const;
 
-export const ItemsPublicSchema = {
+export const IncidentsPublicSchema = {
     properties: {
         data: {
             items: {
-                '$ref': '#/components/schemas/ItemPublic'
+                '$ref': '#/components/schemas/IncidentPublic'
             },
             type: 'array',
             title: 'Data'
@@ -193,7 +193,7 @@ export const ItemsPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'ItemsPublic'
+    title: 'IncidentsPublic'
 } as const;
 
 export const MessageSchema = {
