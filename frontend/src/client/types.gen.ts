@@ -9,21 +9,51 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type CommentCreate = {
+    content: string;
+};
+
+export type CommentPublic = {
+    content: string;
+    id: string;
+    author_id: string;
+    incident_id: string;
+    created_at?: (string | null);
+};
+
+export type CommentsPublic = {
+    data: Array<CommentPublic>;
+    count: number;
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
+export type IncidentCategory = 'bug' | 'feature_request' | 'question' | 'documentation';
+
 export type IncidentCreate = {
     title: string;
     description?: (string | null);
+    status?: IncidentStatus;
+    priority?: IncidentPriority;
+    category?: IncidentCategory;
+    assignee_id?: (string | null);
 };
+
+export type IncidentPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export type IncidentPublic = {
     title: string;
     description?: (string | null);
+    status?: IncidentStatus;
+    priority?: IncidentPriority;
+    category?: IncidentCategory;
     id: string;
     owner_id: string;
+    assignee_id?: (string | null);
     created_at?: (string | null);
+    resolved_at?: (string | null);
 };
 
 export type IncidentsPublic = {
@@ -31,9 +61,15 @@ export type IncidentsPublic = {
     count: number;
 };
 
+export type IncidentStatus = 'open' | 'in_progress' | 'resolved';
+
 export type IncidentUpdate = {
     title?: (string | null);
     description?: (string | null);
+    status?: (IncidentStatus | null);
+    priority?: (IncidentPriority | null);
+    category?: (IncidentCategory | null);
+    assignee_id?: (string | null);
 };
 
 export type Message = {
@@ -112,6 +148,28 @@ export type ValidationError = {
         [key: string]: unknown;
     };
 };
+
+export type CommentsReadCommentsData = {
+    incidentId: string;
+    limit?: number;
+    skip?: number;
+};
+
+export type CommentsReadCommentsResponse = (CommentsPublic);
+
+export type CommentsCreateCommentData = {
+    incidentId: string;
+    requestBody: CommentCreate;
+};
+
+export type CommentsCreateCommentResponse = (CommentPublic);
+
+export type CommentsDeleteCommentData = {
+    commentId: string;
+    incidentId: string;
+};
+
+export type CommentsDeleteCommentResponse = (Message);
 
 export type IncidentsReadIncidentsData = {
     limit?: number;

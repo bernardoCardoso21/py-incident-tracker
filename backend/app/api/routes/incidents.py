@@ -1,11 +1,12 @@
 import uuid
+from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
-from app.models import Incident, IncidentCreate, IncidentPublic, IncidentsPublic, IncidentUpdate, Message
+from app.models import Incident, IncidentCreate, IncidentPublic, IncidentsPublic, IncidentStatus, IncidentUpdate, Message
 
 router = APIRouter(prefix="/incidents", tags=["incidents"])
 
@@ -89,6 +90,12 @@ def update_incident(
         raise HTTPException(status_code=403, detail="Not enough permissions")
     update_dict = incident_in.model_dump(exclude_unset=True)
     incident.sqlmodel_update(update_dict)
+    # Auto-set resolved_at when status changes to RESOLVED
+    if "status" in update_dict:
+        if update_dict["status"] == IncidentStatus.RESOLVED:
+            incident.resolved_at = datetime.now(timezone.utc)
+        else:
+            incident.resolved_at = None
     session.add(incident)
     session.commit()
     session.refresh(incident)

@@ -57,6 +57,80 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const CommentCreateSchema = {
+    properties: {
+        content: {
+            type: 'string',
+            maxLength: 2000,
+            minLength: 1,
+            title: 'Content'
+        }
+    },
+    type: 'object',
+    required: ['content'],
+    title: 'CommentCreate'
+} as const;
+
+export const CommentPublicSchema = {
+    properties: {
+        content: {
+            type: 'string',
+            maxLength: 2000,
+            minLength: 1,
+            title: 'Content'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        author_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Author Id'
+        },
+        incident_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Incident Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['content', 'id', 'author_id', 'incident_id'],
+    title: 'CommentPublic'
+} as const;
+
+export const CommentsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/CommentPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'CommentsPublic'
+} as const;
+
 export const HTTPValidationErrorSchema = {
     properties: {
         detail: {
@@ -69,6 +143,12 @@ export const HTTPValidationErrorSchema = {
     },
     type: 'object',
     title: 'HTTPValidationError'
+} as const;
+
+export const IncidentCategorySchema = {
+    type: 'string',
+    enum: ['bug', 'feature_request', 'question', 'documentation'],
+    title: 'IncidentCategory'
 } as const;
 
 export const IncidentCreateSchema = {
@@ -90,11 +170,41 @@ export const IncidentCreateSchema = {
                 }
             ],
             title: 'Description'
+        },
+        status: {
+            '$ref': '#/components/schemas/IncidentStatus',
+            default: 'open'
+        },
+        priority: {
+            '$ref': '#/components/schemas/IncidentPriority',
+            default: 'medium'
+        },
+        category: {
+            '$ref': '#/components/schemas/IncidentCategory',
+            default: 'bug'
+        },
+        assignee_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Assignee Id'
         }
     },
     type: 'object',
     required: ['title'],
     title: 'IncidentCreate'
+} as const;
+
+export const IncidentPrioritySchema = {
+    type: 'string',
+    enum: ['low', 'medium', 'high', 'critical'],
+    title: 'IncidentPriority'
 } as const;
 
 export const IncidentPublicSchema = {
@@ -117,6 +227,18 @@ export const IncidentPublicSchema = {
             ],
             title: 'Description'
         },
+        status: {
+            '$ref': '#/components/schemas/IncidentStatus',
+            default: 'open'
+        },
+        priority: {
+            '$ref': '#/components/schemas/IncidentPriority',
+            default: 'medium'
+        },
+        category: {
+            '$ref': '#/components/schemas/IncidentCategory',
+            default: 'bug'
+        },
         id: {
             type: 'string',
             format: 'uuid',
@@ -126,6 +248,18 @@ export const IncidentPublicSchema = {
             type: 'string',
             format: 'uuid',
             title: 'Owner Id'
+        },
+        assignee_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Assignee Id'
         },
         created_at: {
             anyOf: [
@@ -138,11 +272,29 @@ export const IncidentPublicSchema = {
                 }
             ],
             title: 'Created At'
+        },
+        resolved_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved At'
         }
     },
     type: 'object',
     required: ['title', 'id', 'owner_id'],
     title: 'IncidentPublic'
+} as const;
+
+export const IncidentStatusSchema = {
+    type: 'string',
+    enum: ['open', 'in_progress', 'resolved'],
+    title: 'IncidentStatus'
 } as const;
 
 export const IncidentUpdateSchema = {
@@ -171,6 +323,48 @@ export const IncidentUpdateSchema = {
                 }
             ],
             title: 'Description'
+        },
+        status: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/IncidentStatus'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        priority: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/IncidentPriority'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        category: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/IncidentCategory'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        assignee_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Assignee Id'
         }
     },
     type: 'object',
