@@ -27,6 +27,12 @@ A full-stack incident tracking application for managing and resolving incidents.
 - **User management** — Admin panel for managing users with role-based access control
 - **Authentication** — Login, signup, and password recovery via email
 
+## Application
+
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
 ## Getting Started
 
 ### Prerequisites
@@ -94,5 +100,4 @@ frontend/
 This project was bootstrapped from the [Full Stack FastAPI Template](https://github.com/fastapi/full-stack-fastapi-template) and customized for incident tracking.
 
 ## License
-
 MIT
