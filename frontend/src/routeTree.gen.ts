@@ -18,6 +18,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutIncidentsRouteImport } from './routes/_layout/incidents'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutIncidentsIdRouteImport } from './routes/_layout/incidents.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -63,6 +64,11 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutIncidentsIdRoute = LayoutIncidentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LayoutIncidentsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -71,8 +77,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/incidents': typeof LayoutIncidentsRoute
+  '/incidents': typeof LayoutIncidentsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
+  '/incidents/$id': typeof LayoutIncidentsIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -80,9 +87,10 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/incidents': typeof LayoutIncidentsRoute
+  '/incidents': typeof LayoutIncidentsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/incidents/$id': typeof LayoutIncidentsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,9 +100,10 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
-  '/_layout/incidents': typeof LayoutIncidentsRoute
+  '/_layout/incidents': typeof LayoutIncidentsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/incidents/$id': typeof LayoutIncidentsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/incidents'
     | '/settings'
+    | '/incidents/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/settings'
     | '/'
+    | '/incidents/$id'
   id:
     | '__root__'
     | '/_layout'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_layout/incidents'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/incidents/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,19 +215,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/incidents/$id': {
+      id: '/_layout/incidents/$id'
+      path: '/$id'
+      fullPath: '/incidents/$id'
+      preLoaderRoute: typeof LayoutIncidentsIdRouteImport
+      parentRoute: typeof LayoutIncidentsRoute
+    }
   }
 }
 
+interface LayoutIncidentsRouteChildren {
+  LayoutIncidentsIdRoute: typeof LayoutIncidentsIdRoute
+}
+
+const LayoutIncidentsRouteChildren: LayoutIncidentsRouteChildren = {
+  LayoutIncidentsIdRoute: LayoutIncidentsIdRoute,
+}
+
+const LayoutIncidentsRouteWithChildren = LayoutIncidentsRoute._addFileChildren(
+  LayoutIncidentsRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutIncidentsRoute: typeof LayoutIncidentsRoute
+  LayoutIncidentsRoute: typeof LayoutIncidentsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
-  LayoutIncidentsRoute: LayoutIncidentsRoute,
+  LayoutIncidentsRoute: LayoutIncidentsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }

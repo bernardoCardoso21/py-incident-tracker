@@ -3,7 +3,83 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { IncidentsReadIncidentsData, IncidentsReadIncidentsResponse, IncidentsCreateIncidentData, IncidentsCreateIncidentResponse, IncidentsReadIncidentData, IncidentsReadIncidentResponse, IncidentsUpdateIncidentData, IncidentsUpdateIncidentResponse, IncidentsDeleteIncidentData, IncidentsDeleteIncidentResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { CommentsReadCommentsData, CommentsReadCommentsResponse, CommentsCreateCommentData, CommentsCreateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, IncidentsReadIncidentsData, IncidentsReadIncidentsResponse, IncidentsCreateIncidentData, IncidentsCreateIncidentResponse, IncidentsReadIncidentData, IncidentsReadIncidentResponse, IncidentsUpdateIncidentData, IncidentsUpdateIncidentResponse, IncidentsDeleteIncidentData, IncidentsDeleteIncidentResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+
+export class CommentsService {
+    /**
+     * Read Comments
+     * Retrieve comments for an incident.
+     * @param data The data for the request.
+     * @param data.incidentId
+     * @param data.skip
+     * @param data.limit
+     * @returns CommentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readComments(data: CommentsReadCommentsData): CancelablePromise<CommentsReadCommentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/incidents/{incident_id}/comments/',
+            path: {
+                incident_id: data.incidentId
+            },
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Comment
+     * Add a comment to an incident.
+     * @param data The data for the request.
+     * @param data.incidentId
+     * @param data.requestBody
+     * @returns CommentPublic Successful Response
+     * @throws ApiError
+     */
+    public static createComment(data: CommentsCreateCommentData): CancelablePromise<CommentsCreateCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/incidents/{incident_id}/comments/',
+            path: {
+                incident_id: data.incidentId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Comment
+     * Delete a comment.
+     * @param data The data for the request.
+     * @param data.incidentId
+     * @param data.commentId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteComment(data: CommentsDeleteCommentData): CancelablePromise<CommentsDeleteCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/incidents/{incident_id}/comments/{comment_id}',
+            path: {
+                incident_id: data.incidentId,
+                comment_id: data.commentId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
 
 export class IncidentsService {
     /**

@@ -1,7 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table"
 import { Check, Copy } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 
 import type { IncidentPublic } from "@/client"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import { cn } from "@/lib/utils"
@@ -31,6 +33,26 @@ function CopyId({ id }: { id: string }) {
   )
 }
 
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
+  open: { label: "Open", variant: "outline" },
+  in_progress: { label: "In Progress", variant: "default" },
+  resolved: { label: "Resolved", variant: "secondary" },
+}
+
+const priorityConfig: Record<string, { label: string; className: string }> = {
+  low: { label: "Low", className: "bg-slate-100 text-slate-700 border-slate-200" },
+  medium: { label: "Medium", className: "bg-yellow-100 text-yellow-800 border-yellow-200" },
+  high: { label: "High", className: "bg-orange-100 text-orange-800 border-orange-200" },
+  critical: { label: "Critical", className: "bg-red-100 text-red-800 border-red-200" },
+}
+
+const categoryConfig: Record<string, string> = {
+  bug: "Bug",
+  feature_request: "Feature Request",
+  question: "Question",
+  documentation: "Documentation",
+}
+
 export const columns: ColumnDef<IncidentPublic>[] = [
   {
     accessorKey: "id",
@@ -41,8 +63,48 @@ export const columns: ColumnDef<IncidentPublic>[] = [
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-      <span className="font-medium">{row.original.title}</span>
+      <Link
+        to="/incidents/$id"
+        params={{ id: row.original.id }}
+        className="font-medium hover:underline"
+      >
+        {row.original.title}
+      </Link>
     ),
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status ?? "open"
+      const config = statusConfig[status] ?? statusConfig.open
+      return <Badge variant={config.variant}>{config.label}</Badge>
+    },
+  },
+  {
+    accessorKey: "priority",
+    header: "Priority",
+    cell: ({ row }) => {
+      const priority = row.original.priority ?? "medium"
+      const config = priorityConfig[priority] ?? priorityConfig.medium
+      return (
+        <Badge variant="outline" className={config.className}>
+          {config.label}
+        </Badge>
+      )
+    },
+  },
+  {
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => {
+      const category = row.original.category ?? "bug"
+      return (
+        <span className="text-sm text-muted-foreground">
+          {categoryConfig[category] ?? category}
+        </span>
+      )
+    },
   },
   {
     accessorKey: "description",
