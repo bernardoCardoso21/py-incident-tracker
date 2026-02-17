@@ -15,10 +15,6 @@ router = APIRouter(prefix="/incidents", tags=["incidents"])
 def read_incidents(
     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
 ) -> Any:
-    """
-    Retrieve incidents.
-    """
-
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Incident)
         count = session.exec(count_statement).one()
@@ -47,9 +43,6 @@ def read_incidents(
 
 @router.get("/{id}", response_model=IncidentPublic)
 def read_incident(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
-    """
-    Get incident by ID.
-    """
     incident = session.get(Incident, id)
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
@@ -62,9 +55,6 @@ def read_incident(session: SessionDep, current_user: CurrentUser, id: uuid.UUID)
 def create_incident(
     *, session: SessionDep, current_user: CurrentUser, incident_in: IncidentCreate
 ) -> Any:
-    """
-    Create new incident.
-    """
     incident = Incident.model_validate(incident_in, update={"owner_id": current_user.id})
     session.add(incident)
     session.commit()
@@ -80,9 +70,6 @@ def update_incident(
     id: uuid.UUID,
     incident_in: IncidentUpdate,
 ) -> Any:
-    """
-    Update an incident.
-    """
     incident = session.get(Incident, id)
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
@@ -90,7 +77,6 @@ def update_incident(
         raise HTTPException(status_code=403, detail="Not enough permissions")
     update_dict = incident_in.model_dump(exclude_unset=True)
     incident.sqlmodel_update(update_dict)
-    # Auto-set resolved_at when status changes to RESOLVED
     if "status" in update_dict:
         if update_dict["status"] == IncidentStatus.RESOLVED:
             incident.resolved_at = datetime.now(timezone.utc)
@@ -106,9 +92,6 @@ def update_incident(
 def delete_incident(
     session: SessionDep, current_user: CurrentUser, id: uuid.UUID
 ) -> Message:
-    """
-    Delete an incident.
-    """
     incident = session.get(Incident, id)
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")

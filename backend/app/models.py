@@ -11,8 +11,6 @@ def get_datetime_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
-# --- Enums ---
-
 
 class IncidentStatus(str, Enum):
     OPEN = "open"
@@ -34,10 +32,7 @@ class IncidentCategory(str, Enum):
     DOCUMENTATION = "documentation"
 
 
-# --- User models ---
 
-
-# Shared properties
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
@@ -45,7 +40,7 @@ class UserBase(SQLModel):
     full_name: str | None = Field(default=None, max_length=255)
 
 
-# Properties to receive via API on creation
+
 class UserCreate(UserBase):
     password: str = Field(min_length=8, max_length=128)
 
@@ -56,7 +51,7 @@ class UserRegister(SQLModel):
     full_name: str | None = Field(default=None, max_length=255)
 
 
-# Properties to receive via API on update, all are optional
+
 class UserUpdate(UserBase):
     email: EmailStr | None = Field(default=None, max_length=255)  # type: ignore
     password: str | None = Field(default=None, min_length=8, max_length=128)
@@ -72,7 +67,7 @@ class UpdatePassword(SQLModel):
     new_password: str = Field(min_length=8, max_length=128)
 
 
-# Database model, database table inferred from class name
+
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
@@ -87,7 +82,7 @@ class User(UserBase, table=True):
     )
 
 
-# Properties to return via API, id is always required
+
 class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime | None = None
@@ -98,10 +93,7 @@ class UsersPublic(SQLModel):
     count: int
 
 
-# --- Incident models ---
 
-
-# Shared properties
 class IncidentBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=255)
@@ -110,12 +102,12 @@ class IncidentBase(SQLModel):
     category: IncidentCategory = Field(default=IncidentCategory.BUG)
 
 
-# Properties to receive on incident creation
+
 class IncidentCreate(IncidentBase):
     assignee_id: uuid.UUID | None = None
 
 
-# Properties to receive on incident update
+
 class IncidentUpdate(IncidentBase):
     title: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
     status: IncidentStatus | None = None  # type: ignore
@@ -124,7 +116,7 @@ class IncidentUpdate(IncidentBase):
     assignee_id: uuid.UUID | None = None
 
 
-# Database model, database table inferred from class name
+
 class Incident(IncidentBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime | None = Field(
@@ -152,7 +144,7 @@ class Incident(IncidentBase, table=True):
     )
 
 
-# Properties to return via API, id is always required
+
 class IncidentPublic(IncidentBase):
     id: uuid.UUID
     owner_id: uuid.UUID
@@ -165,8 +157,6 @@ class IncidentsPublic(SQLModel):
     data: list[IncidentPublic]
     count: int
 
-
-# --- Comment models ---
 
 
 class CommentBase(SQLModel):
@@ -205,21 +195,18 @@ class CommentsPublic(SQLModel):
     count: int
 
 
-# --- Generic models ---
 
-
-# Generic message
 class Message(SQLModel):
     message: str
 
 
-# JSON payload containing access token
+
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"
 
 
-# Contents of JWT token
+
 class TokenPayload(SQLModel):
     sub: str | None = None
 

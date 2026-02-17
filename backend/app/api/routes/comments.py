@@ -13,7 +13,6 @@ router = APIRouter(prefix="/incidents/{incident_id}/comments", tags=["comments"]
 def _get_incident_or_404(
     session: SessionDep, current_user: CurrentUser, incident_id: uuid.UUID
 ) -> Incident:
-    """Get incident and verify the current user has access to it."""
     incident = session.get(Incident, incident_id)
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
@@ -30,9 +29,6 @@ def read_comments(
     skip: int = 0,
     limit: int = 100,
 ) -> Any:
-    """
-    Retrieve comments for an incident.
-    """
     _get_incident_or_404(session, current_user, incident_id)
     count_statement = (
         select(func.count())
@@ -59,9 +55,6 @@ def create_comment(
     incident_id: uuid.UUID,
     comment_in: CommentCreate,
 ) -> Any:
-    """
-    Add a comment to an incident.
-    """
     _get_incident_or_404(session, current_user, incident_id)
     comment = Comment.model_validate(
         comment_in,
@@ -80,9 +73,6 @@ def delete_comment(
     incident_id: uuid.UUID,
     comment_id: uuid.UUID,
 ) -> Message:
-    """
-    Delete a comment.
-    """
     _get_incident_or_404(session, current_user, incident_id)
     comment = session.get(Comment, comment_id)
     if not comment or comment.incident_id != incident_id:

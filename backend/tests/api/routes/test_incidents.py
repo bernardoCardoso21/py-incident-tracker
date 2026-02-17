@@ -166,13 +166,11 @@ def test_update_incident_status_from_resolved_clears_resolved_at(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
     incident = create_random_incident(db)
-    # First resolve it
     client.put(
         f"{settings.API_V1_STR}/incidents/{incident.id}",
         headers=superuser_token_headers,
         json={"status": "resolved"},
     )
-    # Then reopen it
     response = client.put(
         f"{settings.API_V1_STR}/incidents/{incident.id}",
         headers=superuser_token_headers,
