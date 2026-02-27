@@ -27,12 +27,143 @@ A full-stack incident tracking application for managing and resolving incidents.
 - **User management** — Admin panel for managing users with role-based access control
 - **Authentication** — Login, signup, and password recovery via email
 
+## Architecture
+
+```mermaid
+graph TB
+    subgraph Client["Browser"]
+        FE["Frontend<br/>React + TypeScript<br/>Vite / Tailwind / shadcn"]
+    end
+
+    subgraph Server["Server"]
+        TR["Traefik<br/>Reverse Proxy + TLS"]
+        BE["Backend<br/>FastAPI (Python)<br/>SQLModel / Pydantic"]
+        DB["PostgreSQL"]
+        AD["Adminer<br/>DB UI"]
+        ML["Mailcatcher<br/>(dev / test)"]
+    end
+
+    FE -- "HTTPS (api.domain)" --> TR
+    TR -- "HTTP :8000" --> BE
+    TR -- "HTTP :8080" --> AD
+    BE -- "SQL" --> DB
+    AD -- "SQL" --> DB
+    BE -- "SMTP" --> ML
+```
+
+## Incident Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Open : Incident created
+    Open --> In_Progress : Work started
+    In_Progress --> Open : Reverted
+    In_Progress --> Resolved : Issue fixed\n(resolved_at set)
+    Resolved --> In_Progress : Reopened\n(resolved_at cleared)
+    Resolved --> [*]
+
+    note right of Resolved
+        resolved_at timestamp
+        is recorded automatically
+    end note
+```
+
+## Database Schema
+
+```mermaid
+erDiagram
+    USER {
+        uuid id PK
+        string email
+        string hashed_password
+        bool is_active
+        bool is_superuser
+        string full_name
+        datetime created_at
+    }
+
+    INCIDENT {
+        uuid id PK
+        string title
+        string description
+        enum status
+        enum priority
+        enum category
+        datetime created_at
+        datetime resolved_at
+        uuid owner_id FK
+        uuid assignee_id FK
+    }
+
+    COMMENT {
+        uuid id PK
+        string content
+        datetime created_at
+        uuid author_id FK
+        uuid incident_id FK
+    }
+
+    USER ||--o{ INCIDENT : "owns"
+    USER ||--o{ INCIDENT : "assigned to"
+    USER ||--o{ COMMENT : "authors"
+    INCIDENT ||--o{ COMMENT : "has"
+```
+
+## Authentication Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FE as Frontend
+    participant BE as Backend (FastAPI)
+    participant DB as PostgreSQL
+
+    User->>FE: Enter email + password
+    FE->>BE: POST /api/v1/login/access-token
+    BE->>DB: Lookup user by email
+    DB-->>BE: User record
+    BE->>BE: Verify password hash (Argon2/Bcrypt)
+    BE-->>FE: JWT token (8-day expiry)
+    FE->>FE: Store token in localStorage
+
+    Note over FE,BE: Subsequent requests
+
+    FE->>BE: Request + Authorization: Bearer {token}
+    BE->>BE: Validate JWT signature & expiry
+    BE-->>FE: Protected resource
+```
+
+## CI/CD Pipeline
+
+```mermaid
+flowchart LR
+    PR["Pull Request\nor push to master"]
+
+    subgraph CI["Continuous Integration"]
+        direction TB
+        PC["pre-commit\nlinting & formatting"]
+        TB["Backend Tests\n(pytest + 90% coverage)"]
+        DC["Docker Compose\nintegration test"]
+    end
+
+    subgraph CD["Continuous Deployment"]
+        direction TB
+        ST["Deploy Staging\n(push to master)"]
+        PR2["Deploy Production\n(release published)"]
+    end
+
+    PR --> CI
+    CI --> CD
+    ST --> PR2
+```
+
 ## Application
 
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 ![img_2.png](img_2.png)
 ![img_3.png](img_3.png)
+
 ## Getting Started
 
 ### Prerequisites
